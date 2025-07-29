@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>VedAstro API Tester</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>🔮 VedAstro API Tester</h1>
+
+    <label for="userDatetime">Birth Date & Time:</label>
+    <input type="datetime-local" id="userDatetime" required />
+
+    <label for="userLocation">Location:</label>
+    <input type="text" id="userLocation" placeholder="e.g., Indore" required />
+
+    <label for="userTimezone">Timezone (e.g., +5.5):</label>
+    <input type="text" id="userTimezone" placeholder="+5.5" required />
+
+    <label for="apiType">Select API:</label>
+    <select id="apiType">
+      <option value="HoroscopePredictions">Horoscope Predictions</option>
+      <option value="SouthIndianChart">South Indian Chart</option>
+      <option value="AllPlanetData">All Planet Data</option>
+      <option value="AllHouseData">All House Data</option>
+      <option value="MatchReport">Match Report</option>
+    </select>
+
+    <div id="partnerSection" style="display: none;">
+      <h3>Partner's Birth Details (for Match Report)</h3>
+      <label for="partnerDatetime">Partner's Date & Time:</label>
+      <input type="datetime-local" id="partnerDatetime" />
+      <label for="partnerLocation">Partner's Location:</label>
+      <input type="text" id="partnerLocation" placeholder="e.g., Bhopal" />
+    </div>
+
+    <button onclick="callAPI()">Get Prediction</button>
+
+    <div id="output" class="outputBox"></div>
+  </div>
+  <script>async function callAPI() {
+  const type = document.getElementById("apiType").value;
+  const output = document.getElementById("output");
+  output.innerHTML = "⏳ Loading...";
+
+  // Get birth details
+  const birthDateTime = document.getElementById("birthDateTime").value; // e.g., "31/01/1997 22:47"
+  const location = document.getElementById("location").value;
+  const timezone = document.getElementById("timezone").value;
+
+  // For MatchReport, also get partner details
+  const partnerDateTime = document.getElementById("partnerDateTime").value;
+  const partnerLocation = document.getElementById("partnerLocation").value;
+
+  function formatTimeParams(datetimeStr) {
+    const [date, time] = datetimeStr.split(" ");
+    const [day, month, year] = date.split("/");
+    return { time, day, month, year };
+  }
+
+  const { time, day, month, year } = formatTimeParams(birthDateTime);
+  let url = "";
+
+  if (type === "MatchReport") {
+    const { time: pTime, day: pDay, month: pMonth, year: pYear } = formatTimeParams(partnerDateTime);
+    url = `https://api.vedastro.org/api/Calculate/${type}/Location/${location}/Time/${time}/${day}/${month}/${year}/${timezone}/Location/${partnerLocation}/Time/${pTime}/${pDay}/${pMonth}/${pYear}/${timezone}/Ayanamsa/RAMAN`;
+  } else {
+    output.innerHTML = "❌ Unsupported API type.";
+    return;
+  }
+
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error("API returned an error response");
+
+    const data = await response.json();
+    const report = data.Payload.MatchReport;
+
+    if (!report) {
+      output.innerHTML = "ℹ️ No match report data found for the given birth details.";
+      return;
+    }
+
+    let html = `<h3>💖 Match Report</h3>`;
+    html += `<b>Kuta Score:</b> ${report.KutaScore}/100<br><br>`;
+    html += `<b>Embeddings:</b> ${report.Embeddings.join(", ")}<br><br>`;
+
+    // Display predictions if available
+    if (report.PredictionList && report.PredictionList.length > 0) {
+      html += `<h4>📝 Predictions:</h4>`;
+      report.PredictionList.forEach(pred => {
+        html += `<div style="margin-bottom:1em;"><b>${pred.Title}</b><br>${pred.Body}</div>`;
+      });
+    } else {
+      html += `ℹ️ No textual predictions found, but match data is available.`;
+    }
+
+    output.innerHTML = html;
+
+  } catch (error) {
+    console.error("Full error:", error);
+    output.innerHTML = "❌ Error fetching data from API. Please check input values.";
+  }
+}
+</script>
+  <script src="script.js"></script>
+</body>
+</html>
