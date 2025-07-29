@@ -1,13 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>VedAstro API Tester</title>
   <link rel="stylesheet" href="style.css" />
 </head>
+<script>
+  function showSection(sectionName) {
+    // Hide welcome message
+    document.getElementById('welcome-message').style.display = 'none';
+
+    // Show container with form & output
+    document.querySelector('.container').style.display = 'block';
+
+    // Optionally pre-select API if section name matches
+    const apiDropdown = document.getElementById('apiType');
+    if (sectionName === 'horoscope') apiDropdown.value = 'HoroscopePredictions';
+    if (sectionName === 'chart') apiDropdown.value = 'SouthIndianChart';
+    if (sectionName === 'planet') apiDropdown.value = 'AllPlanetData';
+    if (sectionName === 'house') apiDropdown.value = 'AllHouseData';
+    if (sectionName === 'match') {
+      apiDropdown.value = 'MatchReport';
+      document.getElementById('partnerSection').style.display = 'block';
+    } else {
+      document.getElementById('partnerSection').style.display = 'none';
+    }
+  }
+
+  // On page load, hide the container
+  window.onload = function () {
+    document.querySelector('.container').style.display = 'none';
+  };
+</script>
+
 <body>
+  <nav class="navbar">
+    <ul>
+      <li onclick="showSection('horoscope')">Horoscope</li>
+      <li onclick="showSection('chart')">South Chart</li>
+      <li onclick="showSection('planet')">Planet Data</li>
+      <li onclick="showSection('house')">House Data</li>
+      <li onclick="showSection('match')">Match Report</li>
+    </ul>
+
+  </nav>
+
+     <div id="welcome-message">
+      <img
+        src="https://w1.pngwing.com/pngs/507/547/png-transparent-scorpio-astrological-sign-zodiac-sagittarius-horoscope-astrology-astrological-symbols-pisces-thumbnail.png"
+        alt="Astrology Icon" class="astro-icon" />
+
+      <div class="welcome-text">
+        <h2>Welcome to Astrology</h2>
+
+        <p>
+          ✨ Explore the mysteries of the universe with our powerful astrology tools. Whether you're curious about your
+          birth chart, current planetary positions, or compatibility with a loved one — you're in the right place.
+        </p>
+
+        <p>
+          🔮 Let the stars guide you — discover what the cosmos has to say about your destiny today.
+        </p>
+      </div>
+    </div>
   <div class="container">
+ 
     <h1>🔮 VedAstro API Tester</h1>
 
     <label for="userDatetime">Birth Date & Time:</label>
@@ -41,70 +100,71 @@
     <div id="output" class="outputBox"></div>
   </div>
   <script>async function callAPI() {
-  const type = document.getElementById("apiType").value;
-  const output = document.getElementById("output");
-  output.innerHTML = "⏳ Loading...";
+      const type = document.getElementById("apiType").value;
+      const output = document.getElementById("output");
+      output.innerHTML = "⏳ Loading...";
 
-  // Get birth details
-  const birthDateTime = document.getElementById("birthDateTime").value; // e.g., "31/01/1997 22:47"
-  const location = document.getElementById("location").value;
-  const timezone = document.getElementById("timezone").value;
+      // Get birth details
+      const birthDateTime = document.getElementById("birthDateTime").value; // e.g., "31/01/1997 22:47"
+      const location = document.getElementById("location").value;
+      const timezone = document.getElementById("timezone").value;
 
-  // For MatchReport, also get partner details
-  const partnerDateTime = document.getElementById("partnerDateTime").value;
-  const partnerLocation = document.getElementById("partnerLocation").value;
+      // For MatchReport, also get partner details
+      const partnerDateTime = document.getElementById("partnerDateTime").value;
+      const partnerLocation = document.getElementById("partnerLocation").value;
 
-  function formatTimeParams(datetimeStr) {
-    const [date, time] = datetimeStr.split(" ");
-    const [day, month, year] = date.split("/");
-    return { time, day, month, year };
-  }
+      function formatTimeParams(datetimeStr) {
+        const [date, time] = datetimeStr.split(" ");
+        const [day, month, year] = date.split("/");
+        return { time, day, month, year };
+      }
 
-  const { time, day, month, year } = formatTimeParams(birthDateTime);
-  let url = "";
+      const { time, day, month, year } = formatTimeParams(birthDateTime);
+      let url = "";
 
-  if (type === "MatchReport") {
-    const { time: pTime, day: pDay, month: pMonth, year: pYear } = formatTimeParams(partnerDateTime);
-    url = `https://api.vedastro.org/api/Calculate/${type}/Location/${location}/Time/${time}/${day}/${month}/${year}/${timezone}/Location/${partnerLocation}/Time/${pTime}/${pDay}/${pMonth}/${pYear}/${timezone}/Ayanamsa/RAMAN`;
-  } else {
-    output.innerHTML = "❌ Unsupported API type.";
-    return;
-  }
+      if (type === "MatchReport") {
+        const { time: pTime, day: pDay, month: pMonth, year: pYear } = formatTimeParams(partnerDateTime);
+        url = `https://api.vedastro.org/api/Calculate/${type}/Location/${location}/Time/${time}/${day}/${month}/${year}/${timezone}/Location/${partnerLocation}/Time/${pTime}/${pDay}/${pMonth}/${pYear}/${timezone}/Ayanamsa/RAMAN`;
+      } else {
+        output.innerHTML = "❌ Unsupported API type.";
+        return;
+      }
 
-  try {
-    const response = await fetch(url);
-    if (!response.ok) throw new Error("API returned an error response");
+      try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error("API returned an error response");
 
-    const data = await response.json();
-    const report = data.Payload.MatchReport;
+        const data = await response.json();
+        const report = data.Payload.MatchReport;
 
-    if (!report) {
-      output.innerHTML = "ℹ️ No match report data found for the given birth details.";
-      return;
+        if (!report) {
+          output.innerHTML = "ℹ️ No match report data found for the given birth details.";
+          return;
+        }
+
+        let html = `<h3>💖 Match Report</h3>`;
+        html += `<b>Kuta Score:</b> ${report.KutaScore}/100<br><br>`;
+        html += `<b>Embeddings:</b> ${report.Embeddings.join(", ")}<br><br>`;
+
+        // Display predictions if available
+        if (report.PredictionList && report.PredictionList.length > 0) {
+          html += `<h4>📝 Predictions:</h4>`;
+          report.PredictionList.forEach(pred => {
+            html += `<div style="margin-bottom:1em;"><b>${pred.Title}</b><br>${pred.Body}</div>`;
+          });
+        } else {
+          html += `ℹ️ No textual predictions found, but match data is available.`;
+        }
+
+        output.innerHTML = html;
+
+      } catch (error) {
+        console.error("Full error:", error);
+        output.innerHTML = "❌ Error fetching data from API. Please check input values.";
+      }
     }
-
-    let html = `<h3>💖 Match Report</h3>`;
-    html += `<b>Kuta Score:</b> ${report.KutaScore}/100<br><br>`;
-    html += `<b>Embeddings:</b> ${report.Embeddings.join(", ")}<br><br>`;
-
-    // Display predictions if available
-    if (report.PredictionList && report.PredictionList.length > 0) {
-      html += `<h4>📝 Predictions:</h4>`;
-      report.PredictionList.forEach(pred => {
-        html += `<div style="margin-bottom:1em;"><b>${pred.Title}</b><br>${pred.Body}</div>`;
-      });
-    } else {
-      html += `ℹ️ No textual predictions found, but match data is available.`;
-    }
-
-    output.innerHTML = html;
-
-  } catch (error) {
-    console.error("Full error:", error);
-    output.innerHTML = "❌ Error fetching data from API. Please check input values.";
-  }
-}
-</script>
+  </script>
   <script src="script.js"></script>
 </body>
+
 </html>

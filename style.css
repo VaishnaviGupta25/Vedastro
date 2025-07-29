@@ -1,53 +1,199 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
 body {
-  font-family: 'Segoe UI', sans-serif;
-  background: #f7f7f7;
+  font-family: 'Roboto', sans-serif;
+  background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
   padding: 20px;
+  margin: 0;
 }
 
 .container {
-  max-width: 600px;
+  max-width: 700px;
   margin: auto;
-  background: white;
-  padding: 30px;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  background: #fff;
+  padding: 30px 40px;
+  border-radius: 15px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 h1 {
   text-align: center;
   color: #5a189a;
+  font-size: 2rem;
+  margin-bottom: 20px;
 }
 
 label {
   font-weight: bold;
-  margin-top: 15px;
+  margin-top: 20px;
   display: block;
+  color: #333;
 }
 
 input, select {
   width: 100%;
-  padding: 8px;
-  margin-top: 5px;
+  padding: 10px 12px;
+  margin-top: 8px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
   box-sizing: border-box;
+  font-size: 14px;
+  transition: border-color 0.3s;
+}
+
+input:focus, select:focus {
+  border-color: #5a189a;
+  outline: none;
 }
 
 button {
-  margin-top: 20px;
+  margin-top: 25px;
   width: 100%;
-  padding: 10px;
-  background-color: #5a189a;
-  color: white;
+  padding: 12px;
+  background: #5a189a;
+  color: #fff;
   border: none;
   font-size: 16px;
-  border-radius: 5px;
+  font-weight: bold;
+  border-radius: 8px;
   cursor: pointer;
+  transition: background 0.3s;
+}
+
+button:hover {
+  background: #4a0d8f;
 }
 
 .outputBox {
-  margin-top: 25px;
-  padding: 15px;
-  background: #e9ecef;
-  border-radius: 8px;
-  max-height: 500px;
+  margin-top: 30px;
+  padding: 20px;
+  background: #f1f1f1;
+  border-left: 5px solid #5a189a;
+  border-radius: 10px;
+  font-size: 15px;
+  line-height: 1.5;
+  color: #222;
   overflow-y: auto;
+  max-height: 500px;
+}
+
+.outputBox h3 {
+  color: #5a189a;
+}
+
+#partnerSection {
+  background-color: #f9f9ff;
+  padding: 15px;
+  margin-top: 15px;
+  border-left: 4px solid #7b2cbf;
+  border-radius: 8px;
+}
+
+::placeholder {
+  color: #aaa;
+}
+
+@media screen and (max-width: 600px) {
+  .container {
+    padding: 20px;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+}
+.loader {
+  border: 4px solid #e0e0e0;
+  border-top: 4px solid #5a189a;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  margin: auto;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+html, body {
+  margin: 0;
+  padding: 0;
+}
+.navbar {
+  background-color: #5a189a;
+  padding: 10px 0;
+  text-align: center;
+  border-radius: 0 0 10px 10px;
+}
+
+.navbar ul {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+.navbar li {
+  color: white;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s;
+}
+
+.navbar li:hover {
+  background-color: #4a0d8f;
+  border-radius: 5px;
+}
+
+.api-section {
+  display: none;
+}
+#welcome-message {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  padding: 40px 20px;
+  background: linear-gradient(135deg, #f5f0ff, #e0c3fc);
+  border-radius: 15px;
+  max-width: 100%;
+  height: 85vh;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  flex-wrap: wrap;
+}
+
+
+  .astro-icon {
+  width: 800px;
+  height: 500px;
+  border-radius: 10px;
+}
+
+.welcome-text {
+  flex: 1;
+  min-width: 250px;
+}
+
+.welcome-text h2 {
+  font-size: 2rem;
+  margin-bottom: 15px;
+  color: #4b0082;
+}
+
+.welcome-text p {
+  font-size: 1.1rem;
+  color: #333;
+  line-height: 1.6;
+  margin-top: 10px;
 }
